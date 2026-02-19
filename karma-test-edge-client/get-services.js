@@ -11,8 +11,8 @@ describe("get-services", function () {
   this.timeout(5000);
 
   beforeEach(async function () {
-    this.zitiBrowzerCore = new ZitiBrowzerCore();
-    this.logger = this.zitiBrowzerCore.createZitiLogger({
+    this.ztBrowzerCore = new ZitiBrowzerCore();
+    this.logger = this.ztBrowzerCore.createZitiLogger({
       logLevel: 'Trace',
       suffix: 'get-services'
     });
@@ -20,41 +20,41 @@ describe("get-services", function () {
   });
 
   it("get Services", async function () {
-    let zitiContext = this.zitiBrowzerCore.createZitiContext({
+    let ztContext = this.ztBrowzerCore.createZitiContext({
       logger: this.logger,
-      controllerApi: 'https://ziti-edge-controller:1280',
+      controllerApi: 'https://zt-edge-controller:1280',
       updbUser: updbUser,
       updbPswd: updbPswd,
     });
-    expect(zitiContext).to.not.equal(undefined);
+    expect(ztContext).to.not.equal(undefined);
 
-    await zitiContext.initialize();
+    await ztContext.initialize();
 
-    let zitiBrowzerEdgeClient = zitiContext.createZitiBrowzerEdgeClient({
-        domain: 'https://ziti-edge-controller:1280',
+    let ztBrowzerEdgeClient = ztContext.createZitiBrowzerEdgeClient({
+        domain: 'https://zt-edge-controller:1280',
         logger: this.logger
     });
-    expect(zitiBrowzerEdgeClient).to.not.equal(undefined);
+    expect(ztBrowzerEdgeClient).to.not.equal(undefined);
 
-    let token = await zitiContext.getFreshAPISession();
+    let token = await ztContext.getFreshAPISession();
     console.log('token is: ', token);
     expect(token).to.not.equal(undefined);
 
-    await zitiContext.fetchServices();
-    let services = zitiContext.services;
+    await ztContext.fetchServices();
+    let services = ztContext.services;
     // console.log('services is: ', services);
     expect(services).to.not.equal(undefined);
 
-    let id = zitiContext.getServiceIdByName('mattermost-blue');
+    let id = ztContext.getServiceIdByName('mattermost-blue');
     console.log('id is: ', id);
     expect(id).to.not.equal(undefined);
 
-    let encryptionRequired = zitiContext.getServiceEncryptionRequiredByName('mattermost-blue');
+    let encryptionRequired = ztContext.getServiceEncryptionRequiredByName('mattermost-blue');
     console.log('encryptionRequired is: ', encryptionRequired);
     expect(encryptionRequired).to.not.equal(undefined);
     expect(encryptionRequired).to.equal(false);
 
-    let networkSession = await zitiContext.getNetworkSessionByServiceId(id);
+    let networkSession = await ztContext.getNetworkSessionByServiceId(id);
     console.log('networkSession is: ', networkSession);
     expect(networkSession).to.not.equal(undefined);
   

@@ -9,7 +9,7 @@ import { isEqual, isUndefined } from 'lodash-es';
 
 class PassThrough extends Transform  {
 
-  constructor (options, zitiOptions) {
+  constructor (options, ztOptions) {
     super(options);
     this.ee = new EventEmitter();
     if (options.headers) {
@@ -23,7 +23,7 @@ class PassThrough extends Transform  {
         }
       }
     }
-    this.zitiContext = zitiOptions.zitiContext;
+    this.ztContext = ztOptions.ztContext;
     this.textDecoder = new TextDecoder("utf-8");
   }
 
@@ -34,7 +34,7 @@ class PassThrough extends Transform  {
 
       if (!isUndefined(chunk)) {
         let textChunk = this.textDecoder.decode(new Uint8Array(chunk))
-        this.zitiContext.logger.info(`gzip inflate chunk[${textChunk}`);
+        this.ztContext.logger.info(`gzip inflate chunk[${textChunk}`);
       }
 
       /**
@@ -45,10 +45,10 @@ class PassThrough extends Transform  {
        * which leads to errors in Orion web UI.
        */
       if (!isUndefined(chunk)) {
-        if (!isUndefined(this.zitiContext.targetServiceHostAndPort)) { // if we have a targetServiceHostAndPort
+        if (!isUndefined(this.ztContext.targetServiceHostAndPort)) { // if we have a targetServiceHostAndPort
           let decodedChunk = new TextDecoder().decode(chunk);
-          if (decodedChunk.indexOf(this.zitiContext.targetServiceHostAndPort) != -1) {
-            decodedChunk = decodedChunk.replaceAll(this.zitiContext.targetServiceHostAndPort, this.zitiContext.bootstrapperHost);
+          if (decodedChunk.indexOf(this.ztContext.targetServiceHostAndPort) != -1) {
+            decodedChunk = decodedChunk.replaceAll(this.ztContext.targetServiceHostAndPort, this.ztContext.bootstrapperHost);
             chunk = new TextEncoder().encode(decodedChunk);
           }
         }

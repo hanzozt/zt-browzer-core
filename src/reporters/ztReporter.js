@@ -40,7 +40,7 @@ export default class ZitiReporter {
      * 
      */
      async sendLogMessage( logObj ) {
-      const windows = await this.options.zitiBrowzerServiceWorkerGlobalScope.clients.matchAll({ type: 'window' })
+      const windows = await this.options.ztBrowzerServiceWorkerGlobalScope.clients.matchAll({ type: 'window' })
       for (const window of windows) {
         try {
           window.postMessage(

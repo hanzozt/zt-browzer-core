@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 import EventEmitter from 'events';
-import { ZitiSocket } from './ziti-socket';
-import { ZitiInnerTLSSocket } from './ziti-inner-tls-socket';
+import { ZitiSocket } from './zt-socket';
+import { ZitiInnerTLSSocket } from './zt-inner-tls-socket';
 import { isEqual, isUndefined } from 'lodash-es';
 
 
@@ -51,19 +51,19 @@ import { isEqual, isUndefined } from 'lodash-es';
      */
     async createConnection(opts, deferredFn) {
 
-        opts.zitiContext.logger.trace(`ZitiAgent.createConnection() isNew=${opts.isNew} serviceScheme=${opts.serviceScheme}`);
+        opts.ztContext.logger.trace(`ZitiAgent.createConnection() isNew=${opts.isNew} serviceScheme=${opts.serviceScheme}`);
 
         this.deferredFn = deferredFn;
 
         function innerTLSSocketOnData(data) {  
             let innerTLSSocket = this;
             let uint8View = new Uint8Array(data);
-            innerTLSSocket._zitiContext.logger.trace(`ZitiAgent.innerTLSSocketOnData() emitting 'data' to outer socket`);
+            innerTLSSocket._ztContext.logger.trace(`ZitiAgent.innerTLSSocketOnData() emitting 'data' to outer socket`);
             innerTLSSocket.getOuterSocket().emit('data', uint8View);
         }
         function innerTLSSocketOnClose(data) {  
             let innerTLSSocket = this;
-            innerTLSSocket._zitiContext.logger.trace(`ZitiAgent.innerTLSSocketOnClose() emitting 'close' to outer socket`);
+            innerTLSSocket._ztContext.logger.trace(`ZitiAgent.innerTLSSocketOnClose() emitting 'close' to outer socket`);
             innerTLSSocket.getOuterSocket().emit('close', data);
             innerTLSSocket.getOuterSocket().innerTLSSocket = undefined;
         }
@@ -72,7 +72,7 @@ import { isEqual, isUndefined } from 'lodash-es';
          * When this function is called, the mTLS connection to the service has succeeded
          */
         const onSocketConnect = async () => {
-            this.proxy.zitiContext.logger.trace(`ZitiAgent.onSocketConnect() isNew[${opts.isNew}]`);
+            this.proxy.ztContext.logger.trace(`ZitiAgent.onSocketConnect() isNew[${opts.isNew}]`);
 
             if (opts.isNew) {   // Only do the nestedTLS/InnerTLSSocket create/connect work if we haven't already done it previously
 
@@ -81,10 +81,10 @@ import { isEqual, isUndefined } from 'lodash-es';
                  */
                 if (isEqual(this.proxy.serviceScheme, 'https') || isEqual(opts.serviceScheme, 'https:')) {
 
-                    this.proxy.zitiContext.logger.trace(`ZitiAgent.onSocketConnect() creating ZitiInnerTLSSocket`);
+                    this.proxy.ztContext.logger.trace(`ZitiAgent.onSocketConnect() creating ZitiInnerTLSSocket`);
 
                     let innerTLSSocket = new ZitiInnerTLSSocket( this.proxy );
-                    innerTLSSocket.setWASMFD(this.proxy.zitiContext.addWASMFD(innerTLSSocket));
+                    innerTLSSocket.setWASMFD(this.proxy.ztContext.addWASMFD(innerTLSSocket));
                     innerTLSSocket.setOuterSocket(this.socket);
                     this.socket.innerTLSSocket = innerTLSSocket;
                     await innerTLSSocket.create();
@@ -102,18 +102,18 @@ import { isEqual, isUndefined } from 'lodash-es';
 
             this.socket = new ZitiSocket( opts );
             this.socket.isNew = opts.isNew;
-            opts.zitiContext.logger.trace(`ZitiAgent.createConnection() socket[${this.socket._id}] created`);
+            opts.ztContext.logger.trace(`ZitiAgent.createConnection() socket[${this.socket._id}] created`);
             this.socket.on('connect', onSocketConnect);
             await this.socket.connect(opts);
 
         } else {
 
-            opts.zitiContext.logger.trace(`ZitiAgent.createConnection() socket[${this.socket._id}] reused`);
+            opts.ztContext.logger.trace(`ZitiAgent.createConnection() socket[${this.socket._id}] reused`);
             this.socket.isNew = opts.isNew;
             this.socket.req = opts.req;
             await this.socket.connect(opts);
             // this.socket.on('connect', onSocketConnect);
-            // this.socket.emit('connect', this.socket.zitiConnection);
+            // this.socket.emit('connect', this.socket.ztConnection);
 
         }
     }

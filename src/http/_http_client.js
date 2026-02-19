@@ -43,7 +43,7 @@ const {
 // options object as expected by the http.request API.
 function urlToOptions(url) {
   const options = {
-    zitiContext: url.zitiContext,
+    ztContext: url.ztContext,
     serviceName: url.serviceName,
     serviceScheme: url.serviceScheme,
     serviceConnectAppData: url.serviceConnectAppData,
@@ -577,7 +577,7 @@ function parserOnIncomingClient(res, shouldKeepAlive) {
     res._dump();
 
   if (socket.innerTLSSocket) {
-    socket.innerTLSSocket._zitiContext.logger.trace(`parserOnIncomingClient() fd[${socket.innerTLSSocket.wasmFD}] req.path[${req.path}] _closeEventPending[${socket.innerTLSSocket._closeEventPending}]`);
+    socket.innerTLSSocket._ztContext.logger.trace(`parserOnIncomingClient() fd[${socket.innerTLSSocket.wasmFD}] req.path[${req.path}] _closeEventPending[${socket.innerTLSSocket._closeEventPending}]`);
     if (socket.innerTLSSocket._closeEventPending) {
       setTimeout((socket) => {
         socket.innerTLSSocket.emit('close', undefined);
@@ -651,7 +651,7 @@ function responseOnEnd() {
     //   can be written
     responseKeepAlive(req);
 
-    // Release the zitiAgent back into the pool
+    // Release the ztAgent back into the pool
     if (req.agent) {
       req.agent.release();
     }

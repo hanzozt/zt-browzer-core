@@ -29,7 +29,7 @@ let nativePromise = null;
    */
   constructor(options) {
     this._items = new Map();
-    this._zitiContext = options.zitiContext;
+    this._ztContext = options.ztContext;
     this._conn = options.conn;
     this._channel = options.channel;
   }

@@ -11,8 +11,8 @@ describe("test-edge-client", function () {
   this.timeout(5000);
 
   beforeEach(async function () {
-    this.zitiBrowzerCore = new ZitiBrowzerCore();
-    this.logger = this.zitiBrowzerCore.createZitiLogger({
+    this.ztBrowzerCore = new ZitiBrowzerCore();
+    this.logger = this.ztBrowzerCore.createZitiLogger({
       logLevel: 'Trace',
       suffix: 'test-edge-client'
     });
@@ -20,28 +20,28 @@ describe("test-edge-client", function () {
   });
 
   it("get Controller version", async function () {
-    let zitiContext = this.zitiBrowzerCore.createZitiContext({
+    let ztContext = this.ztBrowzerCore.createZitiContext({
       logger: this.logger,
-      controllerApi: 'https://ziti-edge-controller:1280',
+      controllerApi: 'https://zt-edge-controller:1280',
       updbUser: updbUser,
       updbPswd: updbPswd,
     });
-    expect(zitiContext).to.not.equal(undefined);
+    expect(ztContext).to.not.equal(undefined);
 
-    await zitiContext.initialize();
+    await ztContext.initialize();
 
-    let zitiBrowzerEdgeClient = zitiContext.createZitiBrowzerEdgeClient({
-        domain: 'https://ziti-edge-controller:1280',
+    let ztBrowzerEdgeClient = ztContext.createZitiBrowzerEdgeClient({
+        domain: 'https://zt-edge-controller:1280',
         logger: this.logger
     });
-    expect(zitiBrowzerEdgeClient).to.not.equal(undefined);
+    expect(ztBrowzerEdgeClient).to.not.equal(undefined);
 
-    let res = await zitiBrowzerEdgeClient.listVersion();
+    let res = await ztBrowzerEdgeClient.listVersion();
     let controllerVersion = res.data.version;
     console.log('controllerVersion is: ', controllerVersion);
     expect(controllerVersion).to.not.equal(undefined);
 
-    let token = await zitiContext.getFreshAPISession();
+    let token = await ztContext.getFreshAPISession();
     console.log('token is: ', token);
     expect(token).to.not.equal(undefined);
 

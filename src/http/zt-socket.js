@@ -18,7 +18,7 @@ import EventEmitter from 'events';
 import { isUndefined } from 'lodash-es';
 import { Buffer } from 'buffer';
 
-var zitiSocketCounter = 0;
+var ztSocketCounter = 0;
 
 class ZitiSocket extends EventEmitter {
 
@@ -36,7 +36,7 @@ class ZitiSocket extends EventEmitter {
         }
 
         /**
-         * This stream is where we'll put any data returned from a Ziti connection (see ziti_dial.data.call_back)
+         * This stream is where we'll put any data returned from a Ziti connection (see zt_dial.data.call_back)
          */
         this.readableZitiStream = new ReadableStream({
             start(controller) {
@@ -49,7 +49,7 @@ class ZitiSocket extends EventEmitter {
          * @private
          * @type {string}
          */
-        this.zitiContext = opts.zitiContext;
+        this.ztContext = opts.ztContext;
 
         /**
          * The active HTTP request
@@ -61,7 +61,7 @@ class ZitiSocket extends EventEmitter {
          * @private
          * @type {string}
          */
-        this.zitiConnection;
+        this.ztConnection;
 
 
         /**
@@ -72,25 +72,25 @@ class ZitiSocket extends EventEmitter {
         /**
          * 
          */
-        this._id = zitiSocketCounter++; // debugging
+        this._id = ztSocketCounter++; // debugging
     }
 
 
 
 
     /**
-     * Make a connection to the specified Ziti 'service'.  We do this by invoking the ziti_dial() function in the Ziti NodeJS-SDK.
+     * Make a connection to the specified Ziti 'service'.  We do this by invoking the zt_dial() function in the Ziti NodeJS-SDK.
      * @param {*} service 
      */
-    ziti_dial(service) {
+    zt_dial(service) {
         
         const self = this;
         return new Promise((resolve) => {
-            if (self.zitiConnection) {
-                resolve(self.zitiConnection);
+            if (self.ztConnection) {
+                resolve(self.ztConnection);
             }
             else {
-                window.ziti.ziti_dial(
+                window.zt.zt_dial(
                     service,
 
                     self.isWebSocket,
@@ -107,7 +107,7 @@ class ZitiSocket extends EventEmitter {
                      * on_data callback
                      */
                     (data) => {
-                        conn.zitiContext.logger.trace('on_data callback: conn: %s, data: \n%s', this.connAsHex(this.zitiConnection), data.toString());
+                        conn.ztContext.logger.trace('on_data callback: conn: %s, data: \n%s', this.connAsHex(this.ztConnection), data.toString());
                         this.readableZitiStreamController.enqueue(data);
                     },
                 );
@@ -116,12 +116,12 @@ class ZitiSocket extends EventEmitter {
     }
 
     /**
-     * Write data onto the underlying Ziti connection by invoking the ziti_write() function in the Ziti NodeJS-SDK.  The
+     * Write data onto the underlying Ziti connection by invoking the zt_write() function in the Ziti NodeJS-SDK.  The
      * NodeJS-SDK expects incoming data to be of type Buffer.
     */
-    ziti_write(conn, buffer) {
+    zt_write(conn, buffer) {
         return new Promise((resolve) => {
-            window.ziti.ziti_write(
+            window.zt.zt_write(
                 conn, buffer,
                 () => {
                     resolve();
@@ -135,23 +135,23 @@ class ZitiSocket extends EventEmitter {
      */
     captureResponseData(conn, data) {
 
-        conn.zitiContext.logger.trace(`ZitiSocket.captureResponseData() <- conn[${conn.id}] socket[${conn.socket._id}][${conn.socket.isNew}] dataLen: [${data.byteLength}]`);
-        // conn.zitiContext.logger.trace(`ZitiSocket.captureResponseData() <- conn[${conn.id}] (string)data: [${Buffer.from(data, 'utf8')}]`);
+        conn.ztContext.logger.trace(`ZitiSocket.captureResponseData() <- conn[${conn.id}] socket[${conn.socket._id}][${conn.socket.isNew}] dataLen: [${data.byteLength}]`);
+        // conn.ztContext.logger.trace(`ZitiSocket.captureResponseData() <- conn[${conn.id}] (string)data: [${Buffer.from(data, 'utf8')}]`);
 
-        let zitiSocket = conn.socket;
+        let ztSocket = conn.socket;
 
         // If we have an innerTLSsocket, then we need to pass it the data 
         // so it can be decrypted according to the handshake that was done with
         // the connected service (i.e. web server listening on TLS)
-        if (!isUndefined(zitiSocket.innerTLSSocket)) {
-            // zitiSocket.innerTLSSocket.captureResponseData(conn, data);
-            zitiSocket.innerTLSSocket.process(data);
+        if (!isUndefined(ztSocket.innerTLSSocket)) {
+            // ztSocket.innerTLSSocket.captureResponseData(conn, data);
+            ztSocket.innerTLSSocket.process(data);
         } else {
             if (data.byteLength > 0) {
-                zitiSocket.emit('data', data);
+                ztSocket.emit('data', data);
             } else {
-                conn.zitiContext.logger.trace(`ZitiSocket.captureResponseData() <- conn[${conn.id}] emitting 'close' event`);
-                zitiSocket.emit('close', data);
+                conn.ztContext.logger.trace(`ZitiSocket.captureResponseData() <- conn[${conn.id}] emitting 'close' event`);
+                ztSocket.emit('close', data);
             }
         }
     }
@@ -164,14 +164,14 @@ class ZitiSocket extends EventEmitter {
         if (opts.isNew) {
 
             if (typeof opts.conn == 'object') {
-                this.zitiConnection = opts.conn;
+                this.ztConnection = opts.conn;
             }
             else if (typeof opts.serviceName == 'string') {
-                this.zitiConnection = this.zitiContext.newConnection(opts);
-                this.zitiConnection.socket = this;
-                this.zitiContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.zitiConnection.id}] initiated`);
-                await this.zitiContext.dial(this.zitiConnection, opts.serviceName);
-                this.zitiContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.zitiConnection.id}] now complete`);
+                this.ztConnection = this.ztContext.newConnection(opts);
+                this.ztConnection.socket = this;
+                this.ztContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.ztConnection.id}] initiated`);
+                await this.ztContext.dial(this.ztConnection, opts.serviceName);
+                this.ztContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.ztConnection.id}] now complete`);
             } else {
                 throw new Error('no serviceName or conn was provided');
             }
@@ -181,21 +181,21 @@ class ZitiSocket extends EventEmitter {
             //
             // Yes, this code is redundant with that above... but this will change once reusable socket connections is working
             //
-            this.zitiConnection = this.zitiContext.newConnection(opts);
-            this.zitiConnection.socket = this;
-            this.zitiContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.zitiConnection.id}] initiated`);
-            await this.zitiContext.dial(this.zitiConnection, opts.serviceName);
-            this.zitiContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.zitiConnection.id}] now complete`);
+            this.ztConnection = this.ztContext.newConnection(opts);
+            this.ztConnection.socket = this;
+            this.ztContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.ztConnection.id}] initiated`);
+            await this.ztContext.dial(this.ztConnection, opts.serviceName);
+            this.ztContext.logger.debug(`ZitiSocket.connect() dial[${opts.serviceName}] socket[${this._id}] conn[${this.ztConnection.id}] now complete`);
         }
 
         this._writable = true;
 
         // Prepare to capture response data from the request we are about to launch
-        this.zitiConnection.dataCallback = (this.captureResponseData);
-        this.zitiConnection.socket = (this);
+        this.ztConnection.dataCallback = (this.captureResponseData);
+        this.ztConnection.socket = (this);
 
         // Let the HTTP parser layer know we are ready/available
-        this.emit('connect', this.zitiConnection);
+        this.emit('connect', this.ztConnection);
     }
      
 
@@ -219,7 +219,7 @@ class ZitiSocket extends EventEmitter {
         const self = this;
         return new Promise((resolve) => {
             (function waitForConnected() {
-                if (self.zitiConnection && (!isUndefined(self.zitiConnection.channel))) return resolve(self.zitiConnection);
+                if (self.ztConnection && (!isUndefined(self.ztConnection.channel))) return resolve(self.ztConnection);
                 setTimeout(waitForConnected, 10);
             })();
         });
@@ -252,7 +252,7 @@ class ZitiSocket extends EventEmitter {
         }
         if (buffer.length > 0) {
 
-            const conn = await this.getZitiConnection().catch((e) => conn.zitiContext.logger.error('inside ziti-socket.js _write(), Error: ', e.message));
+            const conn = await this.getZitiConnection().catch((e) => conn.ztContext.logger.error('inside zt-socket.js _write(), Error: ', e.message));
 
             // If we have an innerTLSsocket, then we need to pass it the chunk 
             // so it can be encrypted according to the handshake that was done with
@@ -294,7 +294,7 @@ class ZitiSocket extends EventEmitter {
      */
     async destroy() {
         this._writable = false;
-        await this.zitiContext.close(this.zitiConnection);
+        await this.ztContext.close(this.ztConnection);
     }
     
     /**
@@ -302,7 +302,7 @@ class ZitiSocket extends EventEmitter {
      */
     async end(data, encoding, callback) {
         this._writable = false;
-        await this.zitiContext.close(this.zitiConnection);
+        await this.ztContext.close(this.ztConnection);
     }
 
     /**

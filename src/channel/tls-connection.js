@@ -42,7 +42,7 @@ import { v4 as uuidv4 } from 'uuid';
 
     this._type = this._options.type;  // debugging
 
-    this._zitiContext = this._options.zitiContext;
+    this._ztContext = this._options.ztContext;
 
     this._ws = this._options.ws;
 
@@ -61,9 +61,9 @@ import { v4 as uuidv4 } from 'uuid';
    */
   async pullKeyPair() {
 
-    this._privateKeyPEM = await this._zitiContext.get_privateKeyPEM();
+    this._privateKeyPEM = await this._ztContext.get_privateKeyPEM();
 
-    this._certPEM = await this._zitiContext.getCertPEM();
+    this._certPEM = await this._ztContext.getCertPEM();
 
     if (
       isUndefined(this._certPEM) ||
@@ -124,7 +124,7 @@ import { v4 as uuidv4 } from 'uuid';
       },
 
       connected: function(connection) {
-        self._zitiContext.logger.debug('TLS handshake complete');
+        self._ztContext.logger.debug('TLS handshake complete');
 
         self._connected = true;
 
@@ -138,13 +138,13 @@ import { v4 as uuidv4 } from 'uuid';
 
       // client-side cert
       getCertificate: function(connection, hint) {
-        // self._zitiContext.logger.trace('getCertificate(): for: %o: ', self._uuid, self._certPEM );
+        // self._ztContext.logger.trace('getCertificate(): for: %o: ', self._uuid, self._certPEM );
         return self._certPEM;
       },
 
       // client-side private key
       getPrivateKey: function(connection, cert) {
-        // self._zitiContext.logger.trace('getPrivateKey(): for: %o: ', self._uuid, self._privateKeyPEM );
+        // self._ztContext.logger.trace('getPrivateKey(): for: %o: ', self._uuid, self._privateKeyPEM );
         return self._privateKeyPEM;
       },
 
@@ -152,7 +152,7 @@ import { v4 as uuidv4 } from 'uuid';
       tlsDataReady: function(connection) {
         let chunk = new Buffer(connection.tlsData.getBytes(), "binary");
         if (chunk.length > 0) {
-          self._zitiContext.logger.trace('tlsDataReady: encrypted data is ready to be sent to the server  ---> ', chunk);
+          self._ztContext.logger.trace('tlsDataReady: encrypted data is ready to be sent to the server  ---> ', chunk);
           self._ws.send(chunk);
         }
       },
@@ -161,7 +161,7 @@ import { v4 as uuidv4 } from 'uuid';
       dataReady: function(connection) {
         let chunk = new Buffer(connection.data.getBytes(), "binary");
         let ab = chunk.buffer.slice(0, chunk.byteLength);
-        self._zitiContext.logger.trace('dataReady: clear data from the server is ready  <--- ' );
+        self._ztContext.logger.trace('dataReady: clear data from the server is ready  <--- ' );
         self._datacb(self._ch, ab);
       },
 
@@ -176,11 +176,11 @@ import { v4 as uuidv4 } from 'uuid';
       },*/
 
       closed: function(connection) {
-          self._zitiContext.logger.debug('disconnected');
+          self._ztContext.logger.debug('disconnected');
       },
 
       error: function(connection, error) {
-          self._zitiContext.logger.error('uh oh', error);
+          self._ztContext.logger.error('uh oh', error);
           throw error;
       }
     });
@@ -208,7 +208,7 @@ import { v4 as uuidv4 } from 'uuid';
    * @param {*} data 
    */
   process(data) {
-    this._zitiContext.logger.trace('process: encrypted data from the server arrived  <--- [%o]', data);
+    this._ztContext.logger.trace('process: encrypted data from the server arrived  <--- [%o]', data);
     let results = this._tlsClient.process(data);
   }
   
@@ -218,7 +218,7 @@ import { v4 as uuidv4 } from 'uuid';
    * @param {*} data 
    */
   prepare(wireData) {
-    this._zitiContext.logger.trace('prepare: unencrypted data is ready to be sent to the server  ---> [%o]', wireData);
+    this._ztContext.logger.trace('prepare: unencrypted data is ready to be sent to the server  ---> [%o]', wireData);
     let tlsBinaryString = Buffer.from(wireData).toString('binary')
     this._tlsClient.prepare(tlsBinaryString);
   }

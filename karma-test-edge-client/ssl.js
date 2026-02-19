@@ -11,8 +11,8 @@ describe("ssl", function () {
   this.timeout(5000);
 
   beforeEach(async function () {
-    this.zitiBrowzerCore = new ZitiBrowzerCore();
-    this.logger = this.zitiBrowzerCore.createZitiLogger({
+    this.ztBrowzerCore = new ZitiBrowzerCore();
+    this.logger = this.ztBrowzerCore.createZitiLogger({
       logLevel: 'Trace',
       suffix: 'ssl'
     });
@@ -20,37 +20,37 @@ describe("ssl", function () {
   });
 
   it("should make an SSL context", async function () {
-    let zitiContext = this.zitiBrowzerCore.createZitiContext({
+    let ztContext = this.ztBrowzerCore.createZitiContext({
       logger: this.logger,
-      controllerApi: 'https://ziti-edge-controller:1280',
+      controllerApi: 'https://zt-edge-controller:1280',
       updbUser: updbUser,
       updbPswd: updbPswd,
     });
-    expect(zitiContext).to.not.equal(undefined);
+    expect(ztContext).to.not.equal(undefined);
 
-    await zitiContext.initialize();
+    await ztContext.initialize();
 
-    let zitiBrowzerEdgeClient = zitiContext.createZitiBrowzerEdgeClient({
-        domain: 'https://ziti-edge-controller:1280',
+    let ztBrowzerEdgeClient = ztContext.createZitiBrowzerEdgeClient({
+        domain: 'https://zt-edge-controller:1280',
         logger: this.logger
     });
-    expect(zitiBrowzerEdgeClient).to.not.equal(undefined);
+    expect(ztBrowzerEdgeClient).to.not.equal(undefined);
 
-    let res = await zitiBrowzerEdgeClient.listVersion();
+    let res = await ztBrowzerEdgeClient.listVersion();
     let controllerVersion = res.data.version;
     console.log('controllerVersion is: ', controllerVersion);
     expect(controllerVersion).to.not.equal(undefined);
 
-    await zitiContext.enroll();
-    let certPem = await zitiContext.getCertPEM();
+    await ztContext.enroll();
+    let certPem = await ztContext.getCertPEM();
     console.log('certPem is: ', certPem);
     expect(certPem).to.not.equal(undefined);
   
-    let sslCtx = zitiContext.ssl_CTX_new();
+    let sslCtx = ztContext.ssl_CTX_new();
     console.log(sslCtx);
     expect(sslCtx).to.not.equal(undefined);  
 
-    let sbio = zitiContext.bio_new_ssl_connect();
+    let sbio = ztContext.bio_new_ssl_connect();
     console.log(sbio);
     expect(sbio).to.not.equal(undefined);  
 

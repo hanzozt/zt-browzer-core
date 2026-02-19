@@ -65,10 +65,10 @@ const defaultOptions = {
         if (typeof window === 'undefined') { // if running from service-worker
             ws = new WebSocket( url );
         } else {
-            if (typeof window._ziti_realWebSocket === 'undefined') { // if running in Page, without intercept
+            if (typeof window._zt_realWebSocket === 'undefined') { // if running in Page, without intercept
                 ws = new WebSocket( url );
             } else {
-                ws = new _ziti_realWebSocket( url );
+                ws = new _zt_realWebSocket( url );
             }
         }
         return ws;
@@ -126,9 +126,9 @@ const defaultOptions = {
     connectionTimeout: 0,
   
     /**
-     * See {@link Options.zitiContext}
+     * See {@link Options.ztContext}
      */
-     zitiContext: null,
+     ztContext: null,
 };
 
 export {

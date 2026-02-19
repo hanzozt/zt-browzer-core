@@ -39,7 +39,7 @@ const defaultOptions = {
      *
      */
     useSWPostMessage: false,
-    zitiBrowzerServiceWorkerGlobalScope: 0,
+    ztBrowzerServiceWorkerGlobalScope: 0,
 
 
     };

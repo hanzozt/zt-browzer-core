@@ -59,7 +59,7 @@ class ZitiWebSocket {
     this._createOpeningController();
     this._createClosingController();
     this._createChannels();
-    this._zitiContext = options.zitiContext;
+    this._ztContext = options.ztContext;
   }
 
   /**
@@ -247,10 +247,10 @@ class ZitiWebSocket {
     setTimeout(
       function () {
         if (self.isOpened) {
-          self._zitiContext.logger.debug("zws: waitForWSConnection: connection is now open");
+          self._ztContext.logger.debug("zws: waitForWSConnection: connection is now open");
           callback();
         } else {
-          self._zitiContext.logger.debug(`zws: waitForWSConnection: wait...for [${self.url}]`);
+          self._ztContext.logger.debug(`zws: waitForWSConnection: wait...for [${self.url}]`);
           self.waitForWSConnection(callback);
         }
       }, 
@@ -266,18 +266,18 @@ class ZitiWebSocket {
     if (!this.isOpened) {
       let self = this;
       this.waitForWSConnection(function() {
-        self._zitiContext.logger.debug(`zws: send (after awaiting open) -> len[${data.byteLength}] wssER[${self._url}] data[${self._zitiContext.truncateString(data.toString())}]`);
+        self._ztContext.logger.debug(`zws: send (after awaiting open) -> len[${data.byteLength}] wssER[${self._url}] data[${self._ztContext.truncateString(data.toString())}]`);
         self._ws.send(data);
         self._onSend.dispatchAsync(data);
       });
     } else {
-      this._zitiContext.logger.debug(`zws: send -> len[${data.byteLength}] wssER[${this._url}] data[${this._zitiContext.truncateString(data.toString())}]`);
+      this._ztContext.logger.debug(`zws: send -> len[${data.byteLength}] wssER[${this._url}] data[${this._ztContext.truncateString(data.toString())}]`);
       this._ws.send(data);
       this._onSend.dispatchAsync(data);
     }
 
     // Let listeners know we transmitted data
-    this._zitiContext.emit(ZITI_CONSTANTS.ZITI_EVENT_XGRESS, {
+    this._ztContext.emit(ZITI_CONSTANTS.ZITI_EVENT_XGRESS, {
       type: ZITI_CONSTANTS.ZITI_EVENT_XGRESS_TX,
       len: data.byteLength
     });
@@ -345,18 +345,18 @@ class ZitiWebSocket {
   }
 
   _handleOpen(event) {
-    this._zitiContext.logger.debug(`zws: _handleOpen: url[${event.target.url}]`);
+    this._ztContext.logger.debug(`zws: _handleOpen: url[${event.target.url}]`);
     this._onOpen.dispatchAsync(event);
     this._opening.resolve(event);
   }
 
   _handleMessage(event) {
     const data = this._options.extractMessageData(event);
-    this._zitiContext.logger.debug(`zws: _handleMessage: recv <- len[${data.size}] wssER[${this._url}]`);
+    this._ztContext.logger.debug(`zws: _handleMessage: recv <- len[${data.size}] wssER[${this._url}]`);
     this._onMessage.dispatchAsync(data);
 
     // Let listeners know we received data
-    this._zitiContext.emit(ZITI_CONSTANTS.ZITI_EVENT_XGRESS, {
+    this._ztContext.emit(ZITI_CONSTANTS.ZITI_EVENT_XGRESS, {
       type: ZITI_CONSTANTS.ZITI_EVENT_XGRESS_RX,
       len: data.size
     });
@@ -375,7 +375,7 @@ class ZitiWebSocket {
   }
 
   _tryHandleResponse(data) {
-    this._zitiContext.logger.trace(`zws: _tryHandleResponse: recv <- data[${this._zitiContext.truncateString(data.toString())}]`);
+    this._ztContext.logger.trace(`zws: _tryHandleResponse: recv <- data[${this._ztContext.truncateString(data.toString())}]`);
     if (this._options.extractRequestId) {
       const requestId = this._options.extractRequestId(data);
       if (requestId) {
@@ -386,12 +386,12 @@ class ZitiWebSocket {
   }
 
   _handleError(event) {
-    this._zitiContext.logger.error(`zws: _handleError: url[${event.target.url}]`);
+    this._ztContext.logger.error(`zws: _handleError: url[${event.target.url}]`);
     this._onError.dispatchAsync(event);
   }
 
   _handleClose(event) {
-    this._zitiContext.logger.trace(`zws: _handleClose: url[${event.target.url}]`);
+    this._ztContext.logger.trace(`zws: _handleClose: url[${event.target.url}]`);
     this._onClose.dispatchAsync(event);
     this._closing.resolve(event);
     const error = new Error(`zws: closed with reason: ${event.reason} (${event.code}).`);

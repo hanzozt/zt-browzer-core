@@ -7,8 +7,8 @@ describe("test-generate-csr", function () {
   this.timeout(5000);
 
   beforeEach(async function () {
-    this.zitiBrowzerCore = new ZitiBrowzerCore();
-    this.logger = this.zitiBrowzerCore.createZitiLogger({
+    this.ztBrowzerCore = new ZitiBrowzerCore();
+    this.logger = this.ztBrowzerCore.createZitiLogger({
       logLevel: 'Trace',
       suffix: 'test-generate-csr'
     });
@@ -17,18 +17,18 @@ describe("test-generate-csr", function () {
   });
 
   it("generates a CSR", async function () {
-    let zitiContext = this.zitiBrowzerCore.createZitiContext({
+    let ztContext = this.ztBrowzerCore.createZitiContext({
       logger: this.logger,
       controllerApi: 'bogus',
     });
-    expect(zitiContext).to.not.equal(undefined);
-    await zitiContext.initialize(); // this instantiates the OpenSSL WASM
+    expect(ztContext).to.not.equal(undefined);
+    await ztContext.initialize(); // this instantiates the OpenSSL WASM
 
-    let pkey = zitiContext.generateECKey({});
+    let pkey = ztContext.generateECKey({});
     this.logger.debug('pkey is: ', pkey);
     expect(pkey).to.not.equal(undefined);
 
-    let csrPEM = zitiContext.createCertificateSigningRequest({
+    let csrPEM = ztContext.createCertificateSigningRequest({
       key: pkey,
     })
     this.logger.debug(csrPEM);

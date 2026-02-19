@@ -43,8 +43,8 @@ import { HttpResponse } from '../http/response';
 import { ZitiFormData } from '../http/form-data';
 import { BrowserStdout } from '../http/browser-stdout';
 import { http } from '../http/http';
-import { ZitiWebSocketWrapperCtor } from '../http/ziti-websocket-wrapper-ctor';
-import { ZitiAgentPool } from '../http/ziti-agent-pool';
+import { ZitiWebSocketWrapperCtor } from '../http/zt-websocket-wrapper-ctor';
+import { ZitiAgentPool } from '../http/zt-agent-pool';
 import { ZitiWASMFD } from './wasmFD';
 import {
   splitPemChain
@@ -54,7 +54,7 @@ import {
 
 
 import { LibCrypto, EVP_PKEY_EC, EVP_PKEY_RSA } from '@hanzozt/libcrypto-js'
-import { ZitiBrowzerEdgeClient } from '@hanzozt/ziti-browzer-edge-client'
+import { ZitiBrowzerEdgeClient } from '@hanzozt/zt-browzer-edge-client'
 import {Mutex, withTimeout, Semaphore} from 'async-mutex';
 import { isUndefined, isEqual, isNull, result, find, filter, has, minBy, forEach } from 'lodash-es';
 import EventEmitter from 'events';
@@ -199,7 +199,7 @@ class ZitiContext extends EventEmitter {
 
     if (this._initialized) throw Error("Already initialized; Cannot call .initialize() twice on instance.");
 
-    this._zitiBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
+    this._ztBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
       logger: this.logger,
       controllerApi: this.controllerApi,
       domain: this.controllerApi,
@@ -246,9 +246,9 @@ class ZitiContext extends EventEmitter {
 
     }
 
-    this._zitiEnroller = new ZitiEnroller ({
+    this._ztEnroller = new ZitiEnroller ({
       logger: this.logger,
-      zitiContext: this,
+      ztContext: this,
     });
 
     this._initialized = true;
@@ -274,7 +274,7 @@ class ZitiContext extends EventEmitter {
 
     Date.now = _real_Date_now;      // work around an Emscripten issue
 
-    Window._zitiContext = this;
+    Window._ztContext = this;
 
   }
 
@@ -289,15 +289,15 @@ class ZitiContext extends EventEmitter {
   }
 
   createEnroller() {
-    this._zitiEnroller = new ZitiEnroller ({
+    this._ztEnroller = new ZitiEnroller ({
       logger: this.logger,
-      zitiContext: this,
+      ztContext: this,
     });
     this._initialized = true;
   }
 
   async printEphemeralCert() {
-    await this._zitiEnroller.printEphemeralCert();
+    await this._ztEnroller.printEphemeralCert();
   }
 
   async generateKeyPair() {
@@ -382,7 +382,7 @@ class ZitiContext extends EventEmitter {
 
     this.logger.trace(`ZitiContext doing a reInitialize now`);
 
-    this._zitiBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
+    this._ztBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
       logger: this.logger,
       controllerApi: this.controllerApi,
       domain: this.controllerApi,
@@ -401,10 +401,10 @@ class ZitiContext extends EventEmitter {
    */
   createZitiBrowzerEdgeClient (options) {
 
-    let zitiBrowzerEdgeClient = new ZitiBrowzerEdgeClient(Object.assign({
+    let ztBrowzerEdgeClient = new ZitiBrowzerEdgeClient(Object.assign({
     }, options))
 
-    return zitiBrowzerEdgeClient;
+    return ztBrowzerEdgeClient;
   }
 
 
@@ -474,7 +474,7 @@ class ZitiContext extends EventEmitter {
     curve = this._libCrypto.NID_secp521r1,
     compressed = this._libCrypto.POINT_CONVERSION_UNCOMPRESSED,
     version = 3,
-    name = "C=US, ST=NC, L=Charlotte, O=NetFoundry, OU=ADV-DEV, CN=ziti-browzer-core",
+    name = "C=US, ST=NC, L=Charlotte, O=NetFoundry, OU=ADV-DEV, CN=zt-browzer-core",
     // id = "0",
     // basicConstraints = null,
     // keyUsage = this.keyUsage,
@@ -871,16 +871,16 @@ class ZitiContext extends EventEmitter {
    *  do_oidc_authorize
    * 
    *  Utilize Controller's HA OIDC endpoint to acquire an authID.  
-   *  This code exists here, inline, instead of being in the zitiBrowzerEdgeClient, because the controller's
+   *  This code exists here, inline, instead of being in the ztBrowzerEdgeClient, because the controller's
    *  swagger spec doesn't include the new HA OIDC endpoint refs.
    */
    async do_oidc_authorize( codeChallange ) {
 
     let self = this;
 
-    let deferred = self._zitiBrowzerEdgeClient.getDeferred();
+    let deferred = self._ztBrowzerEdgeClient.getDeferred();
 
-    let domain = self._zitiBrowzerEdgeClient.domain;
+    let domain = self._ztBrowzerEdgeClient.domain;
     domain = domain.replace(`/edge/client/v1`, `/oidc/authorize`);
 
     const state = generateRandomState();
@@ -913,7 +913,7 @@ class ZitiContext extends EventEmitter {
       headers: headers,
     };
 
-    self._zitiBrowzerEdgeClient.request('POST', self.proxydomain, {}, body, headers, {}, form, deferred);
+    self._ztBrowzerEdgeClient.request('POST', self.proxydomain, {}, body, headers, {}, form, deferred);
 
     return deferred.promise;
   };
@@ -923,7 +923,7 @@ class ZitiContext extends EventEmitter {
    *  do_oidc_login_ext_jwt
    * 
    *  Utilize Controller's HA OIDC endpoint to authenticate.  
-   *  This code exists here, inline, instead of being in the zitiBrowzerEdgeClient, because the controller's
+   *  This code exists here, inline, instead of being in the ztBrowzerEdgeClient, because the controller's
    *  swagger spec doesn't include the new HA OIDC endpoint refs.
    */
    async do_oidc_login_ext_jwt(parameters) {
@@ -934,8 +934,8 @@ class ZitiContext extends EventEmitter {
         parameters = {};
     }
 
-    let deferred = self._zitiBrowzerEdgeClient.getDeferred();
-    let domain = self._zitiBrowzerEdgeClient.domain;
+    let deferred = self._ztBrowzerEdgeClient.getDeferred();
+    let domain = self._ztBrowzerEdgeClient.domain;
 
     domain = domain.replace(`/edge/client/v1`, `/oidc/login/ext-jwt`);
 
@@ -948,7 +948,7 @@ class ZitiContext extends EventEmitter {
       'Accept': 'application/json',
     }
     // Pass the bearer token we got from the IdP
-    headers = self._zitiBrowzerEdgeClient.setAuthHeaders(headers);
+    headers = self._ztBrowzerEdgeClient.setAuthHeaders(headers);
 
     const queryParams = this.serializeQueryParams(queryParameters);
     const urlWithParams = domain + (queryParams ? "?" + queryParams : "");
@@ -960,7 +960,7 @@ class ZitiContext extends EventEmitter {
       headers: headers,
     };
 
-    self._zitiBrowzerEdgeClient.request('POST', self.proxydomain, {}, body, headers, {}, form, deferred);
+    self._ztBrowzerEdgeClient.request('POST', self.proxydomain, {}, body, headers, {}, form, deferred);
 
     return deferred.promise;
 
@@ -971,7 +971,7 @@ class ZitiContext extends EventEmitter {
    *  do_oidc_authorize_callback
    * 
    *  Utilize Controller's HA OIDC endpoint to authenticate.  
-   *  This code exists here, inline, instead of being in the zitiBrowzerEdgeClient, because the controller's
+   *  This code exists here, inline, instead of being in the ztBrowzerEdgeClient, because the controller's
    *  swagger spec doesn't include the new HA OIDC endpoint refs.
    */
    async do_oidc_authorize_callback(parameters) {
@@ -982,7 +982,7 @@ class ZitiContext extends EventEmitter {
         parameters = {};
     }
 
-    let deferred = self._zitiBrowzerEdgeClient.getDeferred();
+    let deferred = self._ztBrowzerEdgeClient.getDeferred();
     let domain = parameters.cb_url;
 
     let body = {},
@@ -1000,7 +1000,7 @@ class ZitiContext extends EventEmitter {
       headers: headers,
     };
 
-    self._zitiBrowzerEdgeClient.request('POST', self.proxydomain, {}, body, headers, {}, form, deferred);
+    self._ztBrowzerEdgeClient.request('POST', self.proxydomain, {}, body, headers, {}, form, deferred);
 
     return deferred.promise;
 
@@ -1010,16 +1010,16 @@ class ZitiContext extends EventEmitter {
    *  do_oidc_oauth_token
    * 
    *  Utilize Controller's HA OIDC endpoint to acquire an apiToken.  
-   *  This code exists here, inline, instead of being in the zitiBrowzerEdgeClient, because the controller's
+   *  This code exists here, inline, instead of being in the ztBrowzerEdgeClient, because the controller's
    *  swagger spec doesn't include the new HA OIDC endpoint refs.
    */
   async do_oidc_oauth_token( parameters ) {
 
     let self = this;
 
-    let deferred = self._zitiBrowzerEdgeClient.getDeferred();
+    let deferred = self._ztBrowzerEdgeClient.getDeferred();
 
-    let domain = self._zitiBrowzerEdgeClient.domain;
+    let domain = self._ztBrowzerEdgeClient.domain;
     domain = domain.replace(`/edge/client/v1`, `/oidc/oauth/token`);
 
     let body = {},
@@ -1039,7 +1039,7 @@ class ZitiContext extends EventEmitter {
 
     const queryParams = this.serializeQueryParams(queryParameters);
 
-    self._zitiBrowzerEdgeClient.request('POST', domain, {}, body, headers, queryParameters, form, deferred);
+    self._ztBrowzerEdgeClient.request('POST', domain, {}, body, headers, queryParameters, form, deferred);
 
     return deferred.promise;
   };
@@ -1048,16 +1048,16 @@ class ZitiContext extends EventEmitter {
    *  do_oidc_token_refresh
    * 
    *  Utilize Controller's HA OIDC endpoint to acquire a refreshed apiToken.  
-   *  This code exists here, inline, instead of being in the zitiBrowzerEdgeClient, because the controller's
+   *  This code exists here, inline, instead of being in the ztBrowzerEdgeClient, because the controller's
    *  swagger spec doesn't include the new HA OIDC endpoint refs.
    */
     async do_oidc_token_refresh( ) {
 
       let self = this;
   
-      let deferred = self._zitiBrowzerEdgeClient.getDeferred();
+      let deferred = self._ztBrowzerEdgeClient.getDeferred();
   
-      let domain = self._zitiBrowzerEdgeClient.domain;
+      let domain = self._ztBrowzerEdgeClient.domain;
       domain = domain.replace(`/edge/client/v1`, `/oidc/oauth/token`);
   
       let body = {},
@@ -1075,7 +1075,7 @@ class ZitiContext extends EventEmitter {
   
       const queryParams = this.serializeQueryParams(queryParameters);
   
-      self._zitiBrowzerEdgeClient.request('POST', domain, {}, body, headers, queryParameters, form, deferred);
+      self._ztBrowzerEdgeClient.request('POST', domain, {}, body, headers, queryParameters, form, deferred);
   
       return deferred.promise;
     };
@@ -1088,7 +1088,7 @@ class ZitiContext extends EventEmitter {
 
     let self = this;
 
-    this._zitiBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
+    this._ztBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
       logger: this.logger,
       controllerApi: this.controllerApi,
       domain: this.controllerApi,
@@ -1100,7 +1100,7 @@ class ZitiContext extends EventEmitter {
     let auth = { 
 
       configTypes: [
-        'ziti-tunneler-client.v1',
+        'zt-tunneler-client.v1',
         'intercept.v1',
         'zrok.proxy.v1'
       ],
@@ -1108,10 +1108,10 @@ class ZitiContext extends EventEmitter {
       envInfo: {
 
         // e.g.:  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.83 Safari/537.36'
-        arch: (typeof _ziti_realFetch !== 'undefined') ? window.navigator.userAgent : 'n/a',
+        arch: (typeof _zt_realFetch !== 'undefined') ? window.navigator.userAgent : 'n/a',
 
         // e.g.:  'macOS', 'Linux', 'Windows'
-        os: (typeof _ziti_realFetch !== 'undefined') ? (typeof navigator.userAgentData !== 'undefined' ? navigator.userAgentData.platform : 'n/a') : 'n/a'
+        os: (typeof _zt_realFetch !== 'undefined') ? (typeof navigator.userAgentData !== 'undefined' ? navigator.userAgentData.platform : 'n/a') : 'n/a'
       },
 
       sdkInfo: {
@@ -1178,7 +1178,7 @@ class ZitiContext extends EventEmitter {
 
     // ...otherwise, utilize Controller's "legacy"" endpoint to authenticate
     else {
-      let res = await self._zitiBrowzerEdgeClient.authenticate({ 
+      let res = await self._ztBrowzerEdgeClient.authenticate({ 
         method: 'ext-jwt', 
         auth: auth,
         token: token
@@ -1241,7 +1241,7 @@ class ZitiContext extends EventEmitter {
            * Update the edge client so that it has the new access_token from the Controller OIDC auth flow.
            * All subsequent REST calls to the controller will carry that bearer token.
            */
-          this._zitiBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
+          this._ztBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
             logger: this.logger,
             controllerApi: this.controllerApi,
             domain: this.controllerApi,
@@ -1264,7 +1264,7 @@ class ZitiContext extends EventEmitter {
               self.logger.error( error );
             });
 
-            self._zitiBrowzerEdgeClient = self.createZitiBrowzerEdgeClient ({
+            self._ztBrowzerEdgeClient = self.createZitiBrowzerEdgeClient ({
               logger: self.logger,
               controllerApi: self.controllerApi,
               domain: self.controllerApi,
@@ -1328,7 +1328,7 @@ class ZitiContext extends EventEmitter {
           else {
 
             // Set the token header on behalf of all subsequent Controller API calls
-            this._zitiBrowzerEdgeClient.setApiKey(this._apiSession.token, 'zt-session', false);
+            this._ztBrowzerEdgeClient.setApiKey(this._apiSession.token, 'zt-session', false);
 
             setTimeout(this.apiSessionHeartbeat, this.getApiSessionHeartbeatTime(), this );
 
@@ -1370,7 +1370,7 @@ class ZitiContext extends EventEmitter {
 
     }
 
-    this._zitiBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
+    this._ztBrowzerEdgeClient = this.createZitiBrowzerEdgeClient ({
       logger: this.logger,
       controllerApi: this.controllerApi,
       domain: this.controllerApi,
@@ -1380,7 +1380,7 @@ class ZitiContext extends EventEmitter {
 
     if (!this.isControllerHA()) {
       // Set the token header on behalf of all subsequent Controller API calls
-      this._zitiBrowzerEdgeClient.setApiKey(this._apiSession.token, 'zt-session', false);
+      this._ztBrowzerEdgeClient.setApiKey(this._apiSession.token, 'zt-session', false);
     }
 
   }
@@ -1494,16 +1494,16 @@ class ZitiContext extends EventEmitter {
       }
 
       // Acquire the session cert
-      let result = await this._zitiEnroller.enroll();
+      let result = await this._ztEnroller.enroll();
 
       if (!result) {
         this.logger.trace('ZitiContext.enroll(): enroll failed');
         return false;
       }
 
-      this._casPEM = this._zitiEnroller.casPEM;
-      this._certPEM = this._zitiEnroller.certPEM;
-      this._certExpiryTime = this._zitiEnroller.certPEMExpiryTime;
+      this._casPEM = this._ztEnroller.casPEM;
+      this._certPEM = this._ztEnroller.certPEM;
+      this._certExpiryTime = this._ztEnroller.certPEMExpiryTime;
       let certPEMArray = splitPemChain(this._certPEM);
       this._certPEMLeaf = certPEMArray[0];
       this._certPEMIntermediatesArray = certPEMArray.slice(1);
@@ -1600,7 +1600,7 @@ class ZitiContext extends EventEmitter {
 
     self.logger.trace('ZitiContext.apiSessionHeartbeat() entered');
 
-    let res = await self._zitiBrowzerEdgeClient.getCurrentAPISession({ }).catch((error) => {
+    let res = await self._ztBrowzerEdgeClient.getCurrentAPISession({ }).catch((error) => {
       throw error;
     });
 
@@ -1644,7 +1644,7 @@ class ZitiContext extends EventEmitter {
       // If we are NOT in HA mode
       if (!self.isControllerHA()) {
         // Set the token header on behalf of all subsequent Controller API calls
-        self._zitiBrowzerEdgeClient.setApiKey(self._apiSession.token, 'zt-session', false);
+        self._ztBrowzerEdgeClient.setApiKey(self._apiSession.token, 'zt-session', false);
       }
 
       self.logger.trace('ZitiContext.apiSessionHeartbeat() exiting; token is: ', self._apiSession.token);
@@ -1685,7 +1685,7 @@ class ZitiContext extends EventEmitter {
     await this.ensureAPISession();
 
     // Get list of active Services from Controller
-    let res = await this._zitiBrowzerEdgeClient.listServices({ 
+    let res = await this._ztBrowzerEdgeClient.listServices({ 
       configTypes: 'all',
       limit: '100' //TODO add paging support
     }).catch((error) => {
@@ -1716,7 +1716,7 @@ class ZitiContext extends EventEmitter {
      
     let self = this;
 
-    let res = await this._zitiBrowzerEdgeClient.listVersion({ 
+    let res = await this._ztBrowzerEdgeClient.listVersion({ 
     }).catch((error) => {
       // Let listeners know we failed to connect to the Controller
       self.emit(ZITI_CONSTANTS.ZITI_EVENT_CONTROLLER_CONNECTION_ERROR, {
@@ -1756,7 +1756,7 @@ class ZitiContext extends EventEmitter {
     
     let self = this;
 
-    let res = await this._zitiBrowzerEdgeClient.listExternalJwtSigners({ 
+    let res = await this._ztBrowzerEdgeClient.listExternalJwtSigners({ 
     }).catch((error) => {
       // Let listeners know we failed to connect to the Controller
       self.emit(ZITI_CONSTANTS.ZITI_EVENT_CONTROLLER_CONNECTION_ERROR, {
@@ -1873,8 +1873,8 @@ class ZitiContext extends EventEmitter {
     if (config['intercept.v1']) {
       host = config['intercept.v1'].addresses[0];
     } else {
-      if (config['ziti-tunneler-client.v1']) {
-        host = config['ziti-tunneler-client.v1'].hostname;
+      if (config['zt-tunneler-client.v1']) {
+        host = config['zt-tunneler-client.v1'].hostname;
       }
     }
     if (isEqual(host, 'unknown')) {
@@ -2016,10 +2016,10 @@ class ZitiContext extends EventEmitter {
           port: config['intercept.v1'].portRanges[0].high,
         }
       } else {
-        if (config['ziti-tunneler-client.v1']) {
+        if (config['zt-tunneler-client.v1']) {
           ret = {
-            host: config['ziti-tunneler-client.v1'].hostname,
-            port: config['ziti-tunneler-client.v1'].port,
+            host: config['zt-tunneler-client.v1'].hostname,
+            port: config['zt-tunneler-client.v1'].port,
           }
         } else {
           if (config['zrok.proxy.v1']) {
@@ -2090,7 +2090,7 @@ class ZitiContext extends EventEmitter {
    */
   async createNetworkSession(id) {
  
-    let res = await this._zitiBrowzerEdgeClient.createSession({
+    let res = await this._ztBrowzerEdgeClient.createSession({
       session: { 
         serviceId: id,
         type: 'Dial'
@@ -2133,7 +2133,7 @@ class ZitiContext extends EventEmitter {
   newConnection(data) {
 
     let conn = new ZitiConnection({ 
-      zitiContext: this,
+      ztContext: this,
       data: data
     });
 
@@ -2186,7 +2186,7 @@ class ZitiContext extends EventEmitter {
 
         throwIf(isUndefined(conn), 'connection not specified');
         throwIf(isUndefined(service), 'service not specified');
-        throwIf(!isEqual(this, conn.zitiContext), 'connection has different context');
+        throwIf(!isEqual(this, conn.ztContext), 'connection has different context');
 
         this.logger.debug(`dial() conn[${conn.id}] service[${service}]`);
 
@@ -2284,10 +2284,10 @@ class ZitiContext extends EventEmitter {
     return new Promise((resolve) => {
       (function waitForChannelConnectComplete() {
         if (isEqual( ch.state, ZitiEdgeProtocol.conn_state.Initial ) || isEqual( ch.state, ZitiEdgeProtocol.conn_state.Connecting )) {
-          ch.zitiContext.logger.trace(`awaitChannelConnectComplete() ch[${ch.id}] still not yet connected`);
+          ch.ztContext.logger.trace(`awaitChannelConnectComplete() ch[${ch.id}] still not yet connected`);
           setTimeout(waitForChannelConnectComplete, 100);  
         } else {
-          ch.zitiContext.logger.trace(`ch[${ch.id}] is connected`);
+          ch.ztContext.logger.trace(`ch[${ch.id}] is connected`);
           return resolve();
         }
       })();
@@ -2297,7 +2297,7 @@ class ZitiContext extends EventEmitter {
   async getChannelByEdgeRouter(conn, edgeRouter) {
 
     throwIf(isUndefined(conn), 'connection not specified');
-    throwIf(!isEqual(this, conn.zitiContext), 'connection has different context');
+    throwIf(!isEqual(this, conn.ztContext), 'connection has different context');
     throwIf(isUndefined(conn.networkSessionToken), 'connection.networkSessionToken not specified');
     throwIf(isUndefined(edgeRouter), 'edgeRouter not specified');
 
@@ -2347,7 +2347,7 @@ class ZitiContext extends EventEmitter {
   
     // Create a Channel for this Edge Router
     ch = new ZitiChannel({ 
-      zitiContext: this,
+      ztContext: this,
       edgeRouter: edgeRouter,
       session_token: this._apiSession.token,
       network_session_token: conn.networkSessionToken
@@ -2589,7 +2589,7 @@ class ZitiContext extends EventEmitter {
 
     let serviceName = result(find(this._services, function(obj) {
   
-      if (self._getMatchConfigTunnelerClientV1( obj.config['ziti-tunneler-client.v1'], hostname, port )) {
+      if (self._getMatchConfigTunnelerClientV1( obj.config['zt-tunneler-client.v1'], hostname, port )) {
         return true;
       }
 
@@ -2622,7 +2622,7 @@ class ZitiContext extends EventEmitter {
       }
     }
   
-    let corsHostsArray = window.zitiBrowzerRuntime.zitiConfig.browzer.bootstrapper.corsProxy.hosts.split(',');
+    let corsHostsArray = window.ztBrowzerRuntime.ztConfig.browzer.bootstrapper.corsProxy.hosts.split(',');
   
     let routeOverCORSProxy = false;
     forEach(corsHostsArray, function( corsHost ) {
@@ -2702,7 +2702,7 @@ class ZitiContext extends EventEmitter {
     
       let serviceName = result(find(self._services, function(obj) {
   
-        if (self._getMatchConfigTunnelerClientV1( obj.config['ziti-tunneler-client.v1'], hostname, port )) {
+        if (self._getMatchConfigTunnelerClientV1( obj.config['zt-tunneler-client.v1'], hostname, port )) {
           return true;
         }
   
@@ -2725,8 +2725,8 @@ class ZitiContext extends EventEmitter {
 
   /**
    "config": {
-     "ziti-tunneler-client.v1": {
-         "ziti-tunneler-client.v1": {
+     "zt-tunneler-client.v1": {
+         "zt-tunneler-client.v1": {
            "hostname": "example.com",
           "port": 443
         }
@@ -2867,7 +2867,7 @@ class ZitiContext extends EventEmitter {
     this._channelsById = new Map();
   }
  
-  get zitiWebSocketWrapper() {
+  get ztWebSocketWrapper() {
     return ZitiWebSocketWrapperCtor;
   }
 
@@ -3022,8 +3022,8 @@ class ZitiContext extends EventEmitter {
       }
 
       req.on('error', err => {
-        self.logger.error('conn[%o] error EVENT: err: %o', req.socket.zitiConnection.id, err);
-        reject(new Error(`conn[${req.socket.zitiConnection.id}] request to ${req.url} failed, reason: ${err.message}`));
+        self.logger.error('conn[%o] error EVENT: err: %o', req.socket.ztConnection.id, err);
+        reject(new Error(`conn[${req.socket.ztConnection.id}] request to ${req.url} failed, reason: ${err.message}`));
       });
   
       req.on('response', async res => {
@@ -3044,7 +3044,7 @@ class ZitiContext extends EventEmitter {
         if (isEqual(res.statusCode, 204)) {
           response = new HttpResponse(null, response_options);
         } else {
-          let body = res.pipe(new PassThrough( response_options, { zitiContext: res.socket.zitiContext } ));
+          let body = res.pipe(new PassThrough( response_options, { ztContext: res.socket.ztContext } ));
           response = new HttpResponse(body, response_options);
         }
   

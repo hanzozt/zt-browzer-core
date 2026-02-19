@@ -36,24 +36,24 @@ limitations under the License.
 
     let _options = flatOptions(options, defaultOptions);
 
-    this._zitiContext = _options.zitiContext;
+    this._ztContext = _options.ztContext;
 
     this._data = _options.data;
 
     this._state = ZitiEdgeProtocol.conn_state.Initial;
 
-    this._timeout = this._zitiContext.timeout;
+    this._timeout = this._ztContext.timeout;
 
     this._edgeMsgSeq = 1;
 
-    this._id = this._zitiContext.getNextConnectionId();
+    this._id = this._ztContext.getNextConnectionId();
 
-    this._messages = new Messages({ zitiContext: this._zitiContext, conn: this });
+    this._messages = new Messages({ ztContext: this._ztContext, conn: this });
 
   }
 
-  get zitiContext() {
-    return this._zitiContext;
+  get ztContext() {
+    return this._ztContext;
   }
 
   get data() {

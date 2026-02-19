@@ -49,7 +49,7 @@ class Receiver extends Writable {
   constructor(binaryType, extensions, isServer, maxPayload) {
     super();
 
-    // ziti._ctx.logger.debug('ZitiWebSocket.Receiver ctor entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.Receiver ctor entered');
 
     this._binaryType = binaryType || CONSTANTS.BINARY_TYPES[0];
     this[CONSTANTS.kWebSocket] = undefined;
@@ -84,7 +84,7 @@ class Receiver extends Writable {
    * @param {Function} cb Callback
    */
   _write(chunk, encoding, cb) {
-    // ziti._ctx.logger.debug('ZitiWebSocket.Receiver _write entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.Receiver _write entered');
 
     // const data = chunk.toString();
     // this.emit('message', data);
@@ -143,7 +143,7 @@ class Receiver extends Writable {
    * @private
    */
   startLoop(cb) {
-    // ziti._ctx.logger.debug('ZitiWebSocket.Receiver startLoop entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.Receiver startLoop entered');
 
     let err;
     this._loop = true;
@@ -185,7 +185,7 @@ class Receiver extends Writable {
    * @private
    */
   getInfo() {
-    // ziti._ctx.logger.debug('ZitiWebSocket.Receiver getInfo entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.Receiver getInfo entered');
 
     if (this._bufferedBytes < 2) {
       this._loop = false;
@@ -194,7 +194,7 @@ class Receiver extends Writable {
 
     const buf = this.consume(2);
 
-    // ziti._ctx.logger.debug('ZitiWebSocket.Receiver buf 2 bytes is: %o', buf);
+    // zt._ctx.logger.debug('ZitiWebSocket.Receiver buf 2 bytes is: %o', buf);
 
     if ((buf[0] & 0x30) !== 0x00) {
       this._loop = false;
@@ -365,7 +365,7 @@ class Receiver extends Writable {
    * @private
    */
   getData(cb) {
-    // ziti._ctx.logger.debug('ZitiWebSocket.Receiver getData entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.Receiver getData entered');
 
     let data = CONSTANTS.EMPTY_BUFFER;
 
@@ -407,7 +407,7 @@ class Receiver extends Writable {
    * @private
    */
   decompress(data, cb) {
-    // ziti._ctx.logger.debug('ZitiWebSocket.Receiver decompress entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.Receiver decompress entered');
 
     const perMessageDeflate = this._extensions[PerMessageDeflate.extensionName];
 
@@ -439,7 +439,7 @@ class Receiver extends Writable {
    * @private
    */
   dataMessage() {
-    // ziti._ctx.logger.debug('ZitiWebSocket.dataMessage entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.dataMessage entered');
 
     if (this._fin) {
       const messageLength = this._messageLength;
@@ -462,12 +462,12 @@ class Receiver extends Writable {
           data = fragments;
         }
 
-        // ziti._ctx.logger.info('ZitiWebSocket recv <--- data=[%o]', data);
+        // zt._ctx.logger.info('ZitiWebSocket recv <--- data=[%o]', data);
         this.emit('message', data);
       } else {
         const buf = BUFFERUTIL.concat(fragments, messageLength);
 
-        // ziti._ctx.logger.info('ZitiWebSocket recv <--- data=[%o]', buf.toString());
+        // zt._ctx.logger.info('ZitiWebSocket recv <--- data=[%o]', buf.toString());
         this.emit('message', buf.toString());
       }
     }
@@ -483,7 +483,7 @@ class Receiver extends Writable {
    * @private
    */
   controlMessage(data) {
-    // ziti._ctx.logger.debug('ZitiWebSocket.controlMessage entered');
+    // zt._ctx.logger.debug('ZitiWebSocket.controlMessage entered');
 
     if (this._opcode === 0x08) {
       this._loop = false;
@@ -502,15 +502,15 @@ class Receiver extends Writable {
 
         const buf = data.slice(2);
 
-        // ziti._ctx.logger.info('ZitiWebSocket recv <--- control=[conclude]');
+        // zt._ctx.logger.info('ZitiWebSocket recv <--- control=[conclude]');
         this.emit('conclude', code, buf.toString());
         this.end();
       }
     } else if (this._opcode === 0x09) {
-      // ziti._ctx.logger.info('ZitiWebSocket recv <--- control=[ping]');
+      // zt._ctx.logger.info('ZitiWebSocket recv <--- control=[ping]');
       this.emit('ping', data);
     } else {
-      // ziti._ctx.logger.info('ZitiWebSocket recv <--- control=[pong]');
+      // zt._ctx.logger.info('ZitiWebSocket recv <--- control=[pong]');
       this.emit('pong', data);
     }
 
@@ -538,7 +538,7 @@ function error(ErrorCtor, message, prefix, statusCode) {
     prefix ? `Invalid WebSocket frame: ${message}` : message
   );
 
-  // ziti._ctx.logger.error('ZitiWebSocket.error: %o', message);
+  // zt._ctx.logger.error('ZitiWebSocket.error: %o', message);
 
   Error.captureStackTrace(err, error);
   err[CONSTANTS.kStatusCode] = statusCode;

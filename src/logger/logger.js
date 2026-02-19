@@ -23,7 +23,7 @@ import { defaultOptions } from './options'
 import { normalizeLogLevel } from '../logLevels'
 import Types from '../types'
 import { isLogObj } from '../utils/index'
-import ZitiReporter from '../reporters/zitiReporter.js'
+import ZitiReporter from '../reporters/ztReporter.js'
 
 
  
@@ -49,7 +49,7 @@ class ZitiLogger {
     this._reporters = _options.reporters || [new ZitiReporter({
       suffix: this._suffix, 
       useSWPostMessage: _options.useSWPostMessage,
-      zitiBrowzerServiceWorkerGlobalScope: _options.zitiBrowzerServiceWorkerGlobalScope,
+      ztBrowzerServiceWorkerGlobalScope: _options.ztBrowzerServiceWorkerGlobalScope,
     })]
     this._types = _options.types || Types
     this._logLevel = normalizeLogLevel(_options.logLevel, this._types)

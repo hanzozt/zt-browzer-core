@@ -15,7 +15,7 @@ limitations under the License.
 */
 
 import { isNull } from 'lodash-es';
-import { ZitiWebSocketWrapper } from './ziti-websocket-wrapper';
+import { ZitiWebSocketWrapper } from './zt-websocket-wrapper';
 
 /**
  * ZitiWebSocketWrapperCtor:
@@ -29,28 +29,28 @@ class ZitiWebSocketWrapperCtor {
    */
   constructor(address, protocols, options) {
 
-    // It is assumed that the ziti-browzer-runtime has already initialized before we get here
+    // It is assumed that the zt-browzer-runtime has already initialized before we get here
 
     // We only want to intercept WebSockets that target the Ziti BrowZer Bootstrapper
-    var regex = new RegExp( zitiBrowzerRuntime.zitiConfig.browzer.bootstrapper.self.host, 'g' );
+    var regex = new RegExp( ztBrowzerRuntime.ztConfig.browzer.bootstrapper.self.host, 'g' );
 
     let ws;
 
     if (address.match( regex )) { // the request is targeting the Ziti BrowZer Bootstrapper
 
-      ws = new ZitiWebSocketWrapper(address, protocols, options, zitiBrowzerRuntime.zitiContext, zitiBrowzerRuntime.zitiConfig);
+      ws = new ZitiWebSocketWrapper(address, protocols, options, ztBrowzerRuntime.ztContext, ztBrowzerRuntime.ztConfig);
 
     } else {
 
-      let service = zitiBrowzerRuntime.zitiContext.shouldRouteOverZitiSync(address);
+      let service = ztBrowzerRuntime.ztContext.shouldRouteOverZitiSync(address);
 
       if (!isNull(service)) {
 
-        ws = new ZitiWebSocketWrapper(address, protocols, options, zitiBrowzerRuntime.zitiContext, zitiBrowzerRuntime.zitiConfig);
+        ws = new ZitiWebSocketWrapper(address, protocols, options, ztBrowzerRuntime.ztContext, ztBrowzerRuntime.ztConfig);
 
       } else {
 
-        ws = new window._ziti_realWebSocket(address, protocols, options);
+        ws = new window._zt_realWebSocket(address, protocols, options);
 
       }
     }

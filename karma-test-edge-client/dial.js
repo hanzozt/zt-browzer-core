@@ -11,8 +11,8 @@ describe("dial", function () {
   this.timeout(5000);
 
   beforeEach(async function () {
-    this.zitiBrowzerCore = new ZitiBrowzerCore();
-    this.logger = this.zitiBrowzerCore.createZitiLogger({
+    this.ztBrowzerCore = new ZitiBrowzerCore();
+    this.logger = this.ztBrowzerCore.createZitiLogger({
       logLevel: 'Trace',
       suffix: 'dial'
     });
@@ -22,23 +22,23 @@ describe("dial", function () {
   it("Dial Services", async function () {
     console.log('window.__env__ is: ', window.__env__);
 
-    let zitiContext = this.zitiBrowzerCore.createZitiContext({
+    let ztContext = this.ztBrowzerCore.createZitiContext({
       logger: this.logger,
-      controllerApi: 'https://ziti-edge-controller:1280',
+      controllerApi: 'https://zt-edge-controller:1280',
       updbUser: updbUser,
       updbPswd: updbPswd,
     });
-    expect(zitiContext).to.not.equal(undefined);
+    expect(ztContext).to.not.equal(undefined);
 
-    await zitiContext.initialize();
+    await ztContext.initialize();
 
-    let conn = zitiContext.newConnection();
+    let conn = ztContext.newConnection();
     expect(conn).to.not.equal(undefined);
-    expect(conn.zitiContext).to.equal(zitiContext);
+    expect(conn.ztContext).to.equal(ztContext);
 
-    await zitiContext.dial(conn, 'mattermost-blue');
+    await ztContext.dial(conn, 'mattermost-blue');
 
-    let expiryTime = await zitiContext.getCertPEMExpiryTime();
+    let expiryTime = await ztContext.getCertPEMExpiryTime();
     expect(expiryTime).to.not.equal(undefined);
 
   });

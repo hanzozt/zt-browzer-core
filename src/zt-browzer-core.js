@@ -36,12 +36,12 @@ class ZitiBrowzerCore {
    */
   createZitiContext (options) {
 
-    this._zitiContext = new ZitiContext(Object.assign({
+    this._ztContext = new ZitiContext(Object.assign({
       logger: options.logger,
       controllerApi: options.controllerApi,
     }, options))
 
-    return this._zitiContext;
+    return this._ztContext;
   }
 
   /**
@@ -56,7 +56,7 @@ class ZitiBrowzerCore {
   }
 
   get context () {
-    return this._zitiContext;
+    return this._ztContext;
   }
 
 
@@ -67,13 +67,13 @@ class ZitiBrowzerCore {
    */
   createZitiLogger (options) {
 
-    if (this._zitiLogger !== undefined) throw Error("Already have a ZitiLogger; Cannot call .createZitiLogger() twice on instance.");
+    if (this._ztLogger !== undefined) throw Error("Already have a ZitiLogger; Cannot call .createZitiLogger() twice on instance.");
 
-    this._zitiLogger = new ZitiLogger(Object.assign({
+    this._ztLogger = new ZitiLogger(Object.assign({
       logLevel: this._logLevel,
     }, options))
 
-    return this._zitiLogger;
+    return this._ztLogger;
   }
   
   /**
@@ -81,17 +81,17 @@ class ZitiBrowzerCore {
    * @returns ZitiLogger
    */
   createZitiLoggerWithDefaults () {
-    this._zitiLogger = this.createZitiLogger({
+    this._ztLogger = this.createZitiLogger({
       logLevel: 'Silent',
     })
-    return this._zitiLogger;
+    return this._ztLogger;
   }
   
   get logger () {
-    if (this._zitiLogger === undefined) {
-      this._zitiLogger = createZitiLoggerWithDefaults();
+    if (this._ztLogger === undefined) {
+      this._ztLogger = createZitiLoggerWithDefaults();
     }
-    return this._zitiLogger;
+    return this._ztLogger;
   }
   
 }

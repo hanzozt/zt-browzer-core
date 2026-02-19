@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-export { ZitiBrowzerCore }  from './ziti-browzer-core';
+export { ZitiBrowzerCore }  from './zt-browzer-core';
 export { ZitiHttpRequest }      from './http/request';
 export { HttpResponse }     from './http/response';
 export { ZitiFormData }     from './http/form-data';

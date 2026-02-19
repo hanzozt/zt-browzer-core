@@ -1,8 +1,8 @@
 {
-  "name": "@hanzozt/ziti-browzer-core",
+  "name": "@hanzozt/zt-browzer-core",
   "version": "0.73.0",
   "type": "module",
-  "description": "Core componentry for the Ziti browZer ecosystem (used internally by ziti-browzer-runtime and ziti-sdk-browzer)",
+  "description": "Core componentry for the Ziti browZer ecosystem (used internally by zt-browzer-runtime and zt-sdk-browzer)",
   "scripts": {
     "rollup": "rimraf dist && rollup -c ./rollup.config.js",
     "build": "yarn rollup",
@@ -12,10 +12,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hanzozt/ziti-browzer-core.git"
+    "url": "git+https://github.com/hanzozt/zt-browzer-core.git"
   },
   "keywords": [
-    "ziti",
+    "zt",
     "js",
     "javascript",
     "zero trust",
@@ -26,9 +26,9 @@
   "author": "NetFoundry",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/hanzozt/ziti-browzer-core/issues"
+    "url": "https://github.com/hanzozt/zt-browzer-core/issues"
   },
-  "homepage": "https://github.com/hanzozt/ziti-browzer-core#readme",
+  "homepage": "https://github.com/hanzozt/zt-browzer-core#readme",
   "main": "./dist/esm/index.js",
   "files": [
     "dist"
@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@hanzozt/libcrypto-js": "^0.26.0",
-    "@hanzozt/ziti-browzer-edge-client": "^0.7.0",
+    "@hanzozt/zt-browzer-edge-client": "^0.7.0",
     "asn1js": "^3.0.5",
     "assert": "^2.0.0",
     "async-mutex": "^0.5.0",

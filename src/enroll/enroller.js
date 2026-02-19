@@ -42,7 +42,7 @@ import { isUndefined, isNull } from 'lodash-es';
 
     let _options = flatOptions(options, defaultOptions);
 
-    this._zitiContext = _options.zitiContext;
+    this._ztContext = _options.ztContext;
     this.logger = _options.logger;
 
   }
@@ -64,14 +64,14 @@ import { isUndefined, isNull } from 'lodash-es';
   async enroll() {
 
     // Don't proceed until we have successfully logged in to Controller and have established an API session
-    let token = await this._zitiContext.ensureAPISession();
+    let token = await this._ztContext.ensureAPISession();
 
     if (isUndefined(token) || isNull(token)) {
       this.logger.trace('ZitiEnroller.enroll(): ensureAPISession returned null');
       return false;
     }
   
-    await this.generateCSR( await this._zitiContext.getWASMInstance() );
+    await this.generateCSR( await this._ztContext.getWASMInstance() );
 
     let result = await this.createEphemeralCert();
 
@@ -84,14 +84,14 @@ import { isUndefined, isNull } from 'lodash-es';
    */
   async generateCSR(wasmInstance) {
 
-    let pKey = await this._zitiContext.get_pKey();
-    this.logger.trace('ZitiEnroller.generateCSR(): zitiContext.get_pKey returned: ', pKey);
+    let pKey = await this._ztContext.get_pKey();
+    this.logger.trace('ZitiEnroller.generateCSR(): ztContext.get_pKey returned: ', pKey);
 
-    this._csr = this._zitiContext.createCertificateSigningRequest(wasmInstance, {
+    this._csr = this._ztContext.createCertificateSigningRequest(wasmInstance, {
       key: pKey,
     })
     
-    this.logger.trace('ZitiEnroller.generateCSR(): zitiContext.createCertificateSigningRequest returned: ', this._csr);
+    this.logger.trace('ZitiEnroller.generateCSR(): ztContext.createCertificateSigningRequest returned: ', this._csr);
   }
 
 
@@ -100,7 +100,7 @@ import { isUndefined, isNull } from 'lodash-es';
    */
   async createEphemeralCert() {
   
-    let res = await this._zitiContext._zitiBrowzerEdgeClient.createCurrentApiSessionCertificate({
+    let res = await this._ztContext._ztBrowzerEdgeClient.createCurrentApiSessionCertificate({
       sessionCertificate: { 
         csr:  this._csr
       }
@@ -134,7 +134,7 @@ import { isUndefined, isNull } from 'lodash-es';
       // printCertificate( certificate );
     } catch (err) {
       this.logger.error(err);
-      this.logger.error('zitiBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert [%o] which convertPemToCertificate cannot process', this._cert);
+      this.logger.error('ztBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert [%o] which convertPemToCertificate cannot process', this._cert);
       return false;
     }
 
@@ -145,12 +145,12 @@ import { isUndefined, isNull } from 'lodash-es';
     let becomesUsableTimeString = getBecomesUsableStringFromCertificate(certificate);
     let now = new Date();
     let nowTime = now.getTime();
-    this.logger.info('zitiBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert with NotBefore time [%o][%o], it is now [%o][%o], difference of [%o]', becomesUsableTime, becomesUsableTimeString, nowTime, now, (nowTime-becomesUsableTime));
+    this.logger.info('ztBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert with NotBefore time [%o][%o], it is now [%o][%o], difference of [%o]', becomesUsableTime, becomesUsableTimeString, nowTime, now, (nowTime-becomesUsableTime));
     if (nowTime < becomesUsableTime) {
-      this.logger.warn('zitiBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert with NotBefore IN THE FUTURE', becomesUsableTimeString);
+      this.logger.warn('ztBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert with NotBefore IN THE FUTURE', becomesUsableTimeString);
     }
 
-    this.logger.debug('zitiBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert with expiryTime: [%o] expiryDate:[%o]', expiryTime, expiryDate);
+    this.logger.debug('ztBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert with expiryTime: [%o] expiryDate:[%o]', expiryTime, expiryDate);
 
     this._certExpiryTime = expiryTime;
 
@@ -170,7 +170,7 @@ import { isUndefined, isNull } from 'lodash-es';
       printCertificate( certificate, this.logger );
     } catch (err) {
       this.logger.error(err);
-      this.logger.error('zitiBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert [%o] which convertPemToCertificate cannot process', this._cert);
+      this.logger.error('ztBrowzerEdgeClient.createCurrentApiSessionCertificate returned cert [%o] which convertPemToCertificate cannot process', this._cert);
     }
   }
   

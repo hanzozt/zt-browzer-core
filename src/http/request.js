@@ -27,7 +27,7 @@ limitations under the License.
  import { HttpBody } from './body';
  import { ZitiFormData } from './form-data';
 //  const ls = require('../utils/localstorage');
- import {ZITI_CONSTANTS as zitiConstants } from '../constants';
+ import {ZITI_CONSTANTS as ztConstants } from '../constants';
  const clone = HttpBody.clone;
  import pjson from '../../package.json';
  import { isUndefined, isEqual, isNull, forEach, split as _split } from 'lodash-es';
@@ -61,7 +61,7 @@ limitations under the License.
   *
   * @api public
   */
- function ZitiHttpRequest(serviceNameOrConn, input, init = {}, zitiContext) {
+ function ZitiHttpRequest(serviceNameOrConn, input, init = {}, ztContext) {
  
 	 let serviceName;
 	 let conn;
@@ -72,7 +72,7 @@ limitations under the License.
 	 } else if (typeof serviceNameOrConn == 'string') {
 		serviceName = serviceNameOrConn;
 	 } else {
-		zitiContext.logger.error(`first paramater is unsupported type [%o]`, serviceNameOrConn);
+		ztContext.logger.error(`first paramater is unsupported type [%o]`, serviceNameOrConn);
 		throw new Error('first paramater is unsupported type');
 	 }
  
@@ -153,7 +153,7 @@ limitations under the License.
 		 redirect: init.redirect || input.redirect || 'follow',
 		 headers,
 		 parsedURL,
-		 zitiContext,
+		 ztContext,
 	 };
  
 	var ctx = mixin(this);  
@@ -179,7 +179,7 @@ limitations under the License.
  
 
 ZitiHttpRequest.prototype.getZitiContext = function() {
-	return this[INTERNALS].zitiContext;
+	return this[INTERNALS].ztContext;
 }
 
  ZitiHttpRequest.prototype.getServiceName = function() {
@@ -321,7 +321,7 @@ ZitiHttpRequest.prototype.getServiceConnectAppData = function() {
 	 for (const cookie in browserCookies) {
 		 if (browserCookies.hasOwnProperty( cookie )) {
 			cookieObject[cookie] = browserCookies[cookie];
-			if (!isEqual(cookie, '__ziti-browzer-config')) {
+			if (!isEqual(cookie, '__zt-browzer-config')) {
 				if (cookie.includes('CSRF')) {
 					headers.set('X-CSRF-Token', browserCookies[cookie]);
 			 	} else {
@@ -338,7 +338,7 @@ ZitiHttpRequest.prototype.getServiceConnectAppData = function() {
 	 let cookieHeaderValue = '';
 	 for (const cookie in cookieObject) {
 		 if (cookie !== '') {
-			if (!isEqual(cookie, '__ziti-browzer-config')) {
+			if (!isEqual(cookie, '__zt-browzer-config')) {
 			 	if (cookieObject.hasOwnProperty(cookie)) {
 					if (cookieHeaderValue !== '') {
 						cookieHeaderValue += '; ';
@@ -395,7 +395,7 @@ ZitiHttpRequest.prototype.getServiceConnectAppData = function() {
 	 // }
  
 	 let obj = Object.assign({}, {
-		zitiContext: this.getZitiContext(),
+		ztContext: this.getZitiContext(),
 		serviceName: this.getServiceName(),
 		serviceScheme: this.getServiceScheme(),
 		serviceConnectAppData: this.getServiceConnectAppData(),

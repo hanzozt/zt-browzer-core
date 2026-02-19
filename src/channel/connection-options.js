@@ -23,10 +23,10 @@ limitations under the License.
  const defaultOptions = {
   
   /**
-   * See {@link Options.zitiContext}
+   * See {@link Options.ztContext}
    *
    */
-   zitiContext: null,
+   ztContext: null,
 
   /**
    * See {@link Options.data}

@@ -26,7 +26,7 @@ const defaultOptions = {
    * See {@link Options.ctx}
    *
    */
-   zitiContext: null,
+   ztContext: null,
 
   /**
    * See {@link Options.ws}
