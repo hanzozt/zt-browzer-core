@@ -4,33 +4,33 @@
 
 <p align="center">
     <b>
-    <a>@openziti/ziti-browzer-core</a>
+    <a>@hanzozt/ziti-browzer-core</a>
     <br>
     <br>
-    <b>Core componentry for the Ziti browZer ecosystem.  This is used internally by <a href="https://github.com/openziti/ziti-browzer-runtime">ziti-browzer-runtime</a> and <a href="https://github.com/openziti/ziti-sdk-browzer">ziti-sdk-browzer</a>, both of which facilitate creation of a <a href="https://ziti.dev/blog/zitification">Zitified</a> web app.</b>
+    <b>Core componentry for the Ziti browZer ecosystem.  This is used internally by <a href="https://github.com/hanzozt/ziti-browzer-runtime">ziti-browzer-runtime</a> and <a href="https://github.com/hanzozt/ziti-sdk-browzer">ziti-sdk-browzer</a>, both of which facilitate creation of a <a href="https://ziti.dev/blog/zitification">Zitified</a> web app.</b>
     <br>
     <br>
-    <b>Part of the <a href="https://ziti.dev/about">OpenZiti</a> Zero Trust browZer stack</b>
+    <b>Part of the <a href="https://ziti.dev/about">Hanzo ZT</a> Zero Trust browZer stack</b>
 </p>
 
 <p align="center">
     <br>
     <b>Are you interested in knowing how to easily embed programmable, high performance, zero trust networking into your app, on any internet connection, without VPNs?
     <br>
-    Learn more about our <a href="https://ziti.dev/about">OpenZiti</a> project by clicking the image below:</b>
+    Learn more about our <a href="https://ziti.dev/about">Hanzo ZT</a> project by clicking the image below:</b>
     <br>
     <br>
     <a href="https://ziti.dev"><img src="ziti-dev-logo.png" width="200"></a>
 </p>
 
 ---
-[![Build](https://github.com/openziti/ziti-browzer-core/workflows/Build/badge.svg?branch=main)]()
-[![Issues](https://img.shields.io/github/issues-raw/openziti/ziti-browzer-core)]()
-[![npm version](https://badge.fury.io/js/@openziti%2Fziti-browzer-core.svg)](https://badge.fury.io/js/@openziti%2Fziti-browzer-core)
-[![Known Vulnerabilities](https://snyk-widget.herokuapp.com/badge/npm/%40openziti%2Fziti-browzer-core/badge.svg)](https://snyk-widget.herokuapp.com/badge/npm/%40openziti%2Fziti-browzer-core/badge.svg)
+[![Build](https://github.com/hanzozt/ziti-browzer-core/workflows/Build/badge.svg?branch=main)]()
+[![Issues](https://img.shields.io/github/issues-raw/hanzozt/ziti-browzer-core)]()
+[![npm version](https://badge.fury.io/js/@hanzozt%2Fziti-browzer-core.svg)](https://badge.fury.io/js/@hanzozt%2Fziti-browzer-core)
+[![Known Vulnerabilities](https://snyk-widget.herokuapp.com/badge/npm/%40hanzozt%2Fziti-browzer-core/badge.svg)](https://snyk-widget.herokuapp.com/badge/npm/%40hanzozt%2Fziti-browzer-core/badge.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![](https://data.jsdelivr.com/v1/package/npm/@openziti/ziti-browzer-core/badge?style=rounded)](https://www.jsdelivr.com/package/npm/@openziti/ziti-browzer-core)
-[![LOC](https://img.shields.io/tokei/lines/github/openziti/ziti-browzer-core)]()
+[![](https://data.jsdelivr.com/v1/package/npm/@hanzozt/ziti-browzer-core/badge?style=rounded)](https://www.jsdelivr.com/package/npm/@hanzozt/ziti-browzer-core)
+[![LOC](https://img.shields.io/tokei/lines/github/hanzozt/ziti-browzer-core)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=rounded)](CONTRIBUTING.md)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
 

@@ -53,8 +53,8 @@ import {
 
 
 
-import { LibCrypto, EVP_PKEY_EC, EVP_PKEY_RSA } from '@openziti/libcrypto-js'
-import { ZitiBrowzerEdgeClient } from '@openziti/ziti-browzer-edge-client'
+import { LibCrypto, EVP_PKEY_EC, EVP_PKEY_RSA } from '@hanzozt/libcrypto-js'
+import { ZitiBrowzerEdgeClient } from '@hanzozt/ziti-browzer-edge-client'
 import {Mutex, withTimeout, Semaphore} from 'async-mutex';
 import { isUndefined, isEqual, isNull, result, find, filter, has, minBy, forEach } from 'lodash-es';
 import EventEmitter from 'events';
@@ -887,13 +887,13 @@ class ZitiContext extends EventEmitter {
 
     let body = {},
         queryParameters = {
-          client_id:      'openziti',
+          client_id:      'hanzozt',
           scope:          'openid offline_access',
           response_type:  'code',
           redirect_uri:   `https://${self.bootstrapperHost}`,
           code_challenge: `${codeChallange}`,
           code_challenge_method: 'S256',
-          audience:       'openziti',
+          audience:       'hanzozt',
           state:          `${state}`,
         },
         form = {};
@@ -1024,7 +1024,7 @@ class ZitiContext extends EventEmitter {
 
     let body = {},
         queryParameters = {
-          client_id:      'openziti',
+          client_id:      'hanzozt',
           grant_type:     'authorization_code',
           code:           parameters.code,
           redirect_uri:   `https://${self.bootstrapperHost}`,
@@ -1062,7 +1062,7 @@ class ZitiContext extends EventEmitter {
   
       let body = {},
           queryParameters = {
-            client_id:      'openziti',
+            client_id:      'hanzozt',
             grant_type:     'refresh_token',
             refresh_token:  self._apiSession.refresh_token,
           },

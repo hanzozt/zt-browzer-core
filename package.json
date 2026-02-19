@@ -1,5 +1,5 @@
 {
-  "name": "@openziti/ziti-browzer-core",
+  "name": "@hanzozt/ziti-browzer-core",
   "version": "0.73.0",
   "type": "module",
   "description": "Core componentry for the Ziti browZer ecosystem (used internally by ziti-browzer-runtime and ziti-sdk-browzer)",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/openziti/ziti-browzer-core.git"
+    "url": "git+https://github.com/hanzozt/ziti-browzer-core.git"
   },
   "keywords": [
     "ziti",
@@ -26,9 +26,9 @@
   "author": "NetFoundry",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/openziti/ziti-browzer-core/issues"
+    "url": "https://github.com/hanzozt/ziti-browzer-core/issues"
   },
-  "homepage": "https://github.com/openziti/ziti-browzer-core#readme",
+  "homepage": "https://github.com/hanzozt/ziti-browzer-core#readme",
   "main": "./dist/esm/index.js",
   "files": [
     "dist"
@@ -55,8 +55,8 @@
     "upath": "^2.0.1"
   },
   "dependencies": {
-    "@openziti/libcrypto-js": "^0.26.0",
-    "@openziti/ziti-browzer-edge-client": "^0.7.0",
+    "@hanzozt/libcrypto-js": "^0.26.0",
+    "@hanzozt/ziti-browzer-edge-client": "^0.7.0",
     "asn1js": "^3.0.5",
     "assert": "^2.0.0",
     "async-mutex": "^0.5.0",

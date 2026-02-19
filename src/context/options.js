@@ -18,7 +18,7 @@ limitations under the License.
 import { 
     // EVP_PKEY_RSA, 
     EVP_PKEY_EC 
-} from '@openziti/libcrypto-js'
+} from '@hanzozt/libcrypto-js'
 
 
 /**
